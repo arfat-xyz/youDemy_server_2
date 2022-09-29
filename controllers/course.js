@@ -95,3 +95,17 @@ export const create = async (req, res) => {
     );
   }
 };
+
+export const read = async (req, res) => {
+  try {
+    const course = await Course.findOne({ slug: req.params.slug })
+      .populate("instructor", "_id name")
+      .exec();
+    res.json(course);
+  } catch (e) {
+    console.log(
+      "Error from server/controler/course read function's catch =>",
+      e
+    );
+  }
+};
