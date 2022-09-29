@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import User from "../models/user";
 import jwt from "jsonwebtoken";
 import { hashPassword, comparePassword } from "../utils/auth";
@@ -215,8 +214,4 @@ export const resetPassword = async (req, res) => {
     console.log("error from backend resetPassword try catch", err);
     return res.status(400).send("Error try again");
   }
-=======
-export const register = (req, res) => {
-  res.send("register user response from controller");
->>>>>>> 138b9fa (server controllers and routes setup complete)
 };

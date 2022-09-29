@@ -1,4 +1,5 @@
 import User from "../models/user";
+import Course from "../models/course";
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 import queryString from "query-string";
 export const makeInstructor = async (req, res) => {
@@ -71,5 +72,19 @@ export const currentInstructor = async (req, res) => {
     }
   } catch (err) {
     console.log("error from currentInstructor =>", err);
+  }
+};
+
+export const instructorCourses = async (req, res) => {
+  try {
+    const courses = await Course.find({ instructor: req.auth._id })
+      .sort({ createdAt: -1 })
+      .exec();
+    res.json(courses);
+  } catch (e) {
+    console.log(
+      "Error form server/controllers/instructor instructorCourses catch =>",
+      e
+    );
   }
 };

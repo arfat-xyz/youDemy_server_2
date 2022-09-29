@@ -23,8 +23,6 @@ router.get("/send-email", sendTestEmail);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
 
-import { register } from "../controllers/auth";
-
 router.get("/register", register);
 //  (server controllers and routes setup complete)
 
