@@ -2,6 +2,7 @@ import AWS from "aws-sdk";
 const nanoid = require("nanoid");
 import Course from "../models/course";
 import slugify from "slugify";
+import { readFileSync } from "fs";
 
 const awsConfig = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -73,8 +74,8 @@ export const removeImage = async (req, res) => {
 };
 
 export const create = async (req, res) => {
-  // console.log("create course");
-  console.log(req.body);
+  // // console.log("create course");
+  // console.log(req.body);
   try {
     const alreadyExist = await Course.findOne({
       slug: slugify(req.body.name.toLowerCase()),
@@ -107,5 +108,96 @@ export const read = async (req, res) => {
       "Error from server/controler/course read function's catch =>",
       e
     );
+  }
+};
+export const uploadVideo = async (req, res) => {
+  try {
+    // console.log("req.auth._id", req.auth._id);
+    // console.log("req.params.insttructorId", req.params.instructorId);
+
+    if (req.auth._id != req.params.instructorId) {
+      return res.status(400).send("unauthorized");
+    }
+    const { video } = req.files;
+    // console.log(video);
+    if (!video) return res.status(400).send("No video");
+
+    // video params
+    const params = {
+      Bucket: "youdemy-bucket",
+      Key: `${nanoid()}.${video.type.split("/")[1]}`,
+      Body: readFileSync(video.path),
+      ACL: "public-read",
+      ContentType: video.type,
+    };
+
+    // upload to S3
+    S3.upload(params, (err, data) => {
+      if (err) {
+        console.log("Error from S3 upload video =>", err);
+        res.sendStatus(400);
+      }
+      // console.log(data);
+      res.send(data);
+    });
+  } catch (e) {
+    console.log(
+      "Error from server/controler/course uploadVideo function's catch =>",
+      e
+    );
+  }
+};
+export const removeVideo = async (req, res) => {
+  if (req.auth._id != req.params.instructorId) {
+    return res.status(400).send("unauthorized");
+  }
+  try {
+    const { Bucket, Key } = req.body;
+    // console.log(video);
+
+    // video params
+    const params = {
+      Bucket: Bucket,
+      Key: Key,
+    };
+
+    // upload to S3
+    S3.deleteObject(params, (err, data) => {
+      if (err) {
+        console.log("Error from S3 upload video =>", err);
+        res.sendStatus(400);
+      }
+      console.log(data);
+      res.send({ ok: true });
+    });
+  } catch (e) {
+    console.log(
+      "Error from server/controler/course deleteVideo function's catch =>",
+      e
+    );
+  }
+};
+
+export const addLesson = async (req, res) => {
+  try {
+    const { slug, instructorId } = req.params;
+    const { title, content, video } = req.body;
+    const { Location, Bucket, Key, ETag } = video;
+    if (req.auth._id != instructorId) {
+      return res.status(400).send("unauthorized");
+    }
+    const updated = await Course.findOneAndUpdate(
+      { slug },
+      {
+        $push: { lessons: { title, video, content, slug: slugify(title) } },
+      },
+      { new: true }
+    )
+      .populate("instructor", "_id name")
+      .exec();
+    res.json(updated);
+  } catch (e) {
+    console.log("Error from server/controllers/course addLesson catch => :", e);
+    return res.status(400).send("Add lesson failed");
   }
 };
