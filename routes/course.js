@@ -19,7 +19,11 @@ import {
   publishCourse,
   unpublishCourse,
   updateLesson,
+  courses,
 } from "../controllers/course";
+
+// get courses
+router.get("/courses", courses);
 
 // image
 router.post("/course/upload-image", uploadImage);
