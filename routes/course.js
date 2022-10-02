@@ -16,6 +16,8 @@ import {
   addLesson,
   update,
   removeLesson,
+  publishCourse,
+  unpublishCourse,
   updateLesson,
 } from "../controllers/course";
 
@@ -35,6 +37,10 @@ router.post(
 );
 
 router.post("/course/remove-video/:instructorId", requireSignin, removeVideo);
+
+// publish and unpublish course
+router.put("/course/publish/:courseId", requireSignin, publishCourse);
+router.put("/course/unpublish/:courseId", requireSignin, unpublishCourse);
 
 // `/api/course/lesson/${slug}/${course.instructor_id}`,
 router.post("/course/lesson/:slug/:instructorId", requireSignin, addLesson);

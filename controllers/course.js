@@ -3,6 +3,7 @@ const nanoid = require("nanoid");
 import Course from "../models/course";
 import slugify from "slugify";
 import { readFileSync } from "fs";
+import { exec } from "child_process";
 
 const awsConfig = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -269,5 +270,51 @@ export const updateLesson = async (req, res) => {
   } catch (e) {
     console.log("Error from server/controllers/course updateLesson =>", e);
     return res.status(400).send("update lesson failed");
+  }
+};
+
+export const publishCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const course = await Course.findById(courseId).select("instructor").exec();
+
+    if (req.auth._id != course.instructor) {
+      return res.status(400).send("Unauthorized");
+    }
+
+    const updated = await Course.findByIdAndUpdate(
+      courseId,
+      {
+        published: true,
+      },
+      { new: true }
+    ).exec();
+    res.json(updated);
+  } catch (e) {
+    console.log("Error from server/controllers/course publishCourse =>", e);
+    return res.status(400).send("Publish course failed");
+  }
+};
+
+export const unpublishCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const course = await Course.findById(courseId).select("instructor").exec();
+
+    if (req.auth._id != course.instructor) {
+      return res.status(400).send("Unauthorized");
+    }
+
+    const updated = await Course.findByIdAndUpdate(
+      courseId,
+      {
+        published: false,
+      },
+      { new: true }
+    ).exec();
+    res.json(updated);
+  } catch (e) {
+    console.log("Error from server/controllers/course unpublishCourse =>", e);
+    return res.status(400).send("Unublish course failed");
   }
 };
