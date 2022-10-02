@@ -239,3 +239,35 @@ export const removeLesson = async (req, res) => {
     console.log("Error from removeLesson =>", e);
   }
 };
+
+export const updateLesson = async (req, res) => {
+  try {
+    // console.log(req.body);
+    const { slug } = req.params;
+    const { _id, title, content, video, free_preview } = req.body;
+    const course = await Course.findOne({ slug }).select("instructor").exec();
+    if (req.auth._id != course.instructor) {
+      return res.status(400).send("Unauthorized");
+    }
+
+    const updated = await Course.updateOne(
+      {
+        "lessons._id": _id,
+      },
+      {
+        $set: {
+          "lessons.$.title": title,
+          "lessons.$.content": content,
+          "lessons.$.video": video,
+          "lessons.$.free_preview": free_preview,
+        },
+      },
+      { new: true }
+    ).exec();
+    console.log("updated", updated);
+    res.json({ ok: true });
+  } catch (e) {
+    console.log("Error from server/controllers/course updateLesson =>", e);
+    return res.status(400).send("update lesson failed");
+  }
+};
