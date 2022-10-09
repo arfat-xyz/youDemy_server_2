@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
+const { ObjectId } = Schema;
 const userSchema = new Schema(
   {
     password: { type: String, require: true, min: 6, max: 64 },
@@ -18,6 +19,12 @@ const userSchema = new Schema(
       data: String,
       default: "",
     },
+    courses: [
+      {
+        type: ObjectId,
+        ref: "Course",
+      },
+    ],
   },
 
   { timestamps: true }
