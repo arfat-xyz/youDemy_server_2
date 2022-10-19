@@ -1,6 +1,7 @@
 import AWS from "aws-sdk";
 const nanoid = require("nanoid");
 import Course from "../models/course";
+import Completed from "../models/completed";
 import slugify from "slugify";
 import fs from "fs";
 import User from "../models/user";
@@ -460,11 +461,48 @@ export const userCourses = async (req, res) => {
   }
 };
 
+export const markCompleted = async (req, res) => {
+  try {
+    const { courseId, lessonId } = req.body;
+    // console.log(courseId, lessonId);
+
+    // find if user with that course is already created
+    const existing = await Completed.findOne({
+      user: req.auth._id,
+      course: courseId,
+    }).exec();
+    if (existing) {
+      // update
+      const updated = await Completed.findOneAndUpdate(
+        {
+          user: req.auth._id,
+          course: courseId,
+        },
+        {
+          $addToSet: { lessons: lessonId },
+        }
+      ).exec();
+      res.json({ ok: true });
+    } else {
+      // create
+      const created = await new Completed({
+        user: req.auth._id,
+        course: courseId,
+        lessons: lessonId,
+      }).save();
+      res.json({ ok: true });
+    }
+  } catch (e) {
+    console.log("Error from server/controllers/course/markCompleted =>", e);
+    return res.status(400).send("Enrollment create failed");
+  }
+};
+
 /* 
-export const userCourses = async (req, res) => {
+export const markCompleted = async (req, res) => {
   try {
   } catch (e) {
-    console.log("Error from server/controllers/course/userCourses =>", e);
+    console.log("Error from server/controllers/course/markCompleted =>", e);
     return res.status(400).send("Enrollment create failed")
   }
 }; 
