@@ -96,16 +96,32 @@ export const studentCount = async (req, res) => {
       .exec();
     res.json(users);
   } catch (e) {
-    console.log("Error from server/controllers/course/studentCount =>", e);
+    console.log("Error from server/controllers/instructor/studentCount =>", e);
+    return res.status(400).send("Somethis is wrong");
+  }
+};
+
+export const instructorBalance = async (req, res) => {
+  try {
+    let user = await User.findById(req.auth._id).exec();
+    const balance = await stripe.balance.retrieve({
+      stripeAccount: user.stripe_account_id,
+    });
+    res.json(balance);
+  } catch (e) {
+    console.log(
+      "Error from server/controllers/instructor/instructorBalance =>",
+      e
+    );
     return res.status(400).send("Somethis is wrong");
   }
 };
 
 /* 
-export const studentCount = async (req, res) => {
+export const instructorBalance = async (req, res) => {
   try {
   } catch (e) {
-    console.log("Error from server/controllers/course/studentCount =>", e);
+    console.log("Error from server/controllers/instructor/instructorBalance =>", e);
     return res.status(400).send("Somethis is wrong")
   }
 }; 
