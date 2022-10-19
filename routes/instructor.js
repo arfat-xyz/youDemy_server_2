@@ -6,6 +6,7 @@ import {
   getAccountStatus,
   currentInstructor,
   instructorCourses,
+  studentCount,
 } from "../controllers/instructor";
 
 // middlewares
@@ -16,5 +17,7 @@ router.post("/get-account-status", requireSignin, getAccountStatus);
 router.get("/current-instructor", requireSignin, currentInstructor);
 
 router.get("/instructor-courses", requireSignin, instructorCourses);
+
+router.post("/instructor/student-count", requireSignin, studentCount);
 
 module.exports = router;

@@ -531,10 +531,10 @@ export const markIncomplete = async (req, res) => {
 };
 
 /* 
-export const markIncompleted = async (req, res) => {
+export const studentCount = async (req, res) => {
   try {
   } catch (e) {
-    console.log("Error from server/controllers/course/markIncompleted =>", e);
+    console.log("Error from server/controllers/course/studentCount =>", e);
     return res.status(400).send("Somethis is wrong")
   }
 }; 

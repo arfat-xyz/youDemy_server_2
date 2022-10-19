@@ -88,3 +88,25 @@ export const instructorCourses = async (req, res) => {
     );
   }
 };
+
+export const studentCount = async (req, res) => {
+  try {
+    const users = await User.find({ courses: req.body.courseId })
+      // .select("_id")
+      .exec();
+    res.json(users);
+  } catch (e) {
+    console.log("Error from server/controllers/course/studentCount =>", e);
+    return res.status(400).send("Somethis is wrong");
+  }
+};
+
+/* 
+export const studentCount = async (req, res) => {
+  try {
+  } catch (e) {
+    console.log("Error from server/controllers/course/studentCount =>", e);
+    return res.status(400).send("Somethis is wrong")
+  }
+}; 
+*/
