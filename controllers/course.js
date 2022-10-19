@@ -457,7 +457,7 @@ export const userCourses = async (req, res) => {
     res.json(courses);
   } catch (e) {
     console.log("Error from server/controllers/course/userCourses =>", e);
-    return res.status(400).send("Enrollment create failed");
+    return res.status(400).send("Somethis is wrong");
   }
 };
 
@@ -494,16 +494,29 @@ export const markCompleted = async (req, res) => {
     }
   } catch (e) {
     console.log("Error from server/controllers/course/markCompleted =>", e);
-    return res.status(400).send("Enrollment create failed");
+    return res.status(400).send("Somethis is wrong");
+  }
+};
+
+export const listCompleted = async (req, res) => {
+  try {
+    const list = await Completed.findOne({
+      user: req.auth._id,
+      course: req.body.courseId,
+    }).exec();
+    list && res.json(list.lessons);
+  } catch (e) {
+    console.log("Error from server/controllers/course/listCompleted =>", e);
+    return res.status(400).send("Somethis is wrong");
   }
 };
 
 /* 
-export const markCompleted = async (req, res) => {
+export const listCompleted = async (req, res) => {
   try {
   } catch (e) {
-    console.log("Error from server/controllers/course/markCompleted =>", e);
-    return res.status(400).send("Enrollment create failed")
+    console.log("Error from server/controllers/course/listCompleted =>", e);
+    return res.status(400).send("Somethis is wrong")
   }
 }; 
 */
