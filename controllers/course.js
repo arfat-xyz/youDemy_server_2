@@ -511,11 +511,30 @@ export const listCompleted = async (req, res) => {
   }
 };
 
+export const markIncomplete = async (req, res) => {
+  try {
+    const { courseId, lessonId } = req.body;
+    const updated = await Completed.findOneAndUpdate(
+      {
+        user: req.auth._id,
+        course: courseId,
+      },
+      {
+        $pull: { lessons: lessonId },
+      }
+    ).exec();
+    res.json({ ok: true });
+  } catch (e) {
+    console.log("Error from server/controllers/course/markIncomplete =>", e);
+    return res.status(400).send("Somethis is wrong");
+  }
+};
+
 /* 
-export const listCompleted = async (req, res) => {
+export const markIncompleted = async (req, res) => {
   try {
   } catch (e) {
-    console.log("Error from server/controllers/course/listCompleted =>", e);
+    console.log("Error from server/controllers/course/markIncompleted =>", e);
     return res.status(400).send("Somethis is wrong")
   }
 }; 
