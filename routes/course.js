@@ -28,6 +28,7 @@ import {
   markCompleted,
   markIncomplete,
   listCompleted,
+  downloadPdf,
 } from "../controllers/course";
 
 // get courses
@@ -73,5 +74,6 @@ router.get("/user/course/:slug", requireSignin, isEnrolled, read);
 router.post("/mark-completed", requireSignin, markCompleted);
 router.post("/mark-incomplete", requireSignin, markIncomplete);
 router.post("/list-completed", requireSignin, listCompleted);
+router.get("/downloadPdf", downloadPdf);
 
 module.exports = router;

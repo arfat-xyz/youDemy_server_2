@@ -3,8 +3,9 @@ const nanoid = require("nanoid");
 import Course from "../models/course";
 import Completed from "../models/completed";
 import slugify from "slugify";
-import fs from "fs";
+import fs, { writeFileSync } from "fs";
 import User from "../models/user";
+const { PDFDocument } = require("pdf-lib");
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 const awsConfig = {
@@ -529,12 +530,21 @@ export const markIncomplete = async (req, res) => {
     return res.status(400).send("Somethis is wrong");
   }
 };
-
+export const downloadPdf = async (req, res) => {
+  try {
+    const PDFdoc = await PDFDocument.create();
+    const page = PDFdoc.addPage([300, 400]);
+    writeFileSync("blank.pdf", await PDFdoc.save());
+  } catch (e) {
+    console.log("Error from server/controllers/course/downloadPdf =>", e);
+    return res.status(400).send("Somethis is wrong");
+  }
+};
 /* 
-export const studentCount = async (req, res) => {
+export const downloadPdf = async (req, res) => {
   try {
   } catch (e) {
-    console.log("Error from server/controllers/course/studentCount =>", e);
+    console.log("Error from server/controllers/course/downloadPdf =>", e);
     return res.status(400).send("Somethis is wrong")
   }
 }; 

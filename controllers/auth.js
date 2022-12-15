@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { hashPassword, comparePassword } from "../utils/auth";
 import AWS from "aws-sdk";
 const nanoid = require("nanoid");
+// import fetch from "node-fetch";
 
 const awsConfig = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -212,6 +213,17 @@ export const resetPassword = async (req, res) => {
     res.json({ ok: true });
   } catch (err) {
     console.log("error from backend resetPassword try catch", err);
+    return res.status(400).send("Error try again");
+  }
+};
+export const QuestGen = async (req, res) => {
+  try {
+    return;
+    const x = await fetch("http://51e6-34-86-246-85.ngrok.io/");
+    console.log(x);
+    return await res.json(x);
+  } catch (err) {
+    console.log("error from backend questGen try catch", err);
     return res.status(400).send("Error try again");
   }
 };

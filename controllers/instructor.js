@@ -116,12 +116,27 @@ export const instructorBalance = async (req, res) => {
     return res.status(400).send("Somethis is wrong");
   }
 };
-
+export const instructorPayoutSettings = async (req, res) => {
+  try {
+    const user = await User.findById(req.auth._id).exec();
+    const loginLink = await stripe.accounts.createLoginLink(
+      user.stripe_seller.id,
+      { redirect_url: process.env.STRIPE_SETTINGS_REDIRECT }
+    );
+    res.json(loginLink.url);
+  } catch (e) {
+    console.log(
+      "Error from server/controllers/instructor/instructorPayoutSettings =>",
+      e
+    );
+    return res.status(400).send("Somethis is wrong");
+  }
+};
 /* 
-export const instructorBalance = async (req, res) => {
+export const instructorPayoutSettings = async (req, res) => {
   try {
   } catch (e) {
-    console.log("Error from server/controllers/instructor/instructorBalance =>", e);
+    console.log("Error from server/controllers/instructor/instructorPayoutSettings =>", e);
     return res.status(400).send("Somethis is wrong")
   }
 }; 

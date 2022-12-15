@@ -10,6 +10,7 @@ import {
   sendTestEmail,
   forgotPassword,
   resetPassword,
+  QuestGen,
 } from "../controllers/auth";
 
 // middlewares
@@ -25,5 +26,7 @@ router.post("/reset-password", resetPassword);
 
 router.get("/register", register);
 //  (server controllers and routes setup complete)
+
+// router.get("/quest", QuestGen);
 
 module.exports = router;
